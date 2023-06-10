@@ -1,0 +1,1 @@
+{"mappings":"khBAAAA,EAAA,S","sources":["src/js/shopping-list.js"],"sourcesContent":["import './aside-support-ukraine.js';\nimport './burger-menu.js';\nimport './header.js';\nimport './shopping-list-main.js';\n"],"names":["parcelRequire"],"version":3,"file":"shopping-list.b3234f4f.js.map"}
