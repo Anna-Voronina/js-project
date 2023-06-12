@@ -1,6 +1,8 @@
 import { SwaggerAPI } from './swagger-api.js';
+import { Notify } from 'notiflix';
 import createBook from './templates/create-book.js';
 import addListener from './modal-window.js';
+import emptySeeMoreBooksMarkup from './templates/empty-category-markup';
 
 const booksContainer = document.querySelector('.category-list');
 const title = document.querySelector('.home-title');
@@ -33,6 +35,11 @@ async function createBlock() {
         markUpCount = 5;
       }
 
+      if (topBooks.length === 0) {
+        Notify.failure('There are no best sellers books in this category');
+        return;
+      }
+
       const markup = `<li class="category-list-item top-list-item">
         <p class="category-name" data-category-name="${
           topBooks[0].list_name
@@ -47,9 +54,9 @@ async function createBlock() {
       findBtn();
     }
   } catch (error) {
-    console.log(error);
+    Notify.failure('Something went wrong. Please, try later.');
   }
-  addListener()
+  addListener();
 }
 
 function findBtn() {
@@ -68,25 +75,28 @@ async function onSeeMoreBtnClick(event) {
     topBooksAPI.categoryName = name;
     const { data } = await topBooksAPI.fetchBooksByCategory();
 
+    if (data.length === 0) {
+      booksContainer.innerHTML = emptySeeMoreBooksMarkup();
+      return;
+    }
+
     title.innerHTML = divideTitleElements(name);
     booksContainer.classList.add('category-list-click');
     booksContainer.innerHTML = createBook(data);
     addActiveClassToCategoryListItem(name);
+    addListener();
   } catch (error) {
-    console.log(error);
+    Notify.failure('Something went wrong. Please, try later.');
   }
 }
 
 function divideTitleElements(categoryName) {
-
-
   const words = categoryName.split(' ');
   const lastWord = words[words.length - 1];
   const otherWords = words.slice(0, words.length - 1).join(' ');
 
   return `<span class="home-title-decor">${otherWords} </span>${lastWord}`;
 }
-
 
 function addActiveClassToCategoryListItem(name) {
   const asideCategoryItems = document.querySelectorAll('.aside-item');
@@ -99,3 +109,4 @@ function addActiveClassToCategoryListItem(name) {
     }
   });
 }
+
