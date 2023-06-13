@@ -34,6 +34,8 @@ html.light {
   /* Book modal window */
   --modal-bg-color: #ffffff;
   --modal-desr-text-color: rgba(17, 17, 17, 0.5);
+  --modal-auth-btn : #111111;
+  --modal-auth-input: #202024;
   /* Pagination */
   --current-btn-bg-color: #111111;
   --current-btn-text-color: #ffffff;
@@ -58,6 +60,8 @@ html.dark {
   /* Book modal window */
   --modal-bg-color: #202024;
   --modal-desr-text-color: rgba(255, 255, 255, 0.5);
+  --modal-auth-btn : #f6f6f6;
+  --modal-auth-input: #202024;
   /* Pagination */
   --current-page-bg-color: #ffffff;
   --current-btn-text-color: #000000;
