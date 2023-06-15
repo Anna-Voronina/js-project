@@ -8,7 +8,7 @@ const listItems = supUkrFonds.map(
   (item, index) => `
   <li class="support-company">
     <p class="sup-comp-numb">${(index + 1).toString().padStart(2, '0')}</p>
-    <a href="${
+    <a class="sub-comp-ref" href="${
       item.url
     }" target="_blank" rel="noopener noreferrer" aria-label="${item.title}">
       <picture>
