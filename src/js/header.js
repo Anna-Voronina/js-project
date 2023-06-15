@@ -45,3 +45,30 @@ function onAuthModalCloseBtnClick() {
   ref.authModal.classList.add('is-hidden');
   document.body.style.overflow = 'auto';
 }
+
+let isLogOutBtnVisible = false;
+
+ref.signUpBtn.addEventListener('click', event => {
+  event.stopPropagation();
+
+  const logOutBtn = ref.logOutBtn;
+  const arrowDownElement = document.querySelector('.header-arrow-down');
+
+  if (!isLogOutBtnVisible) {
+    logOutBtn.classList.remove('is-hidden');
+    arrowDownElement.classList.add('active-sign-up');
+    isLogOutBtnVisible = true;
+  } else {
+    logOutBtn.classList.add('is-hidden');
+    arrowDownElement.classList.remove('active-sign-up');
+    isLogOutBtnVisible = false;
+  }
+});
+
+window.addEventListener('click', () => {
+  ref.logOutBtn.classList.add('is-hidden');
+  document
+    .querySelector('.header-arrow-down')
+    .classList.remove('active-sign-up');
+  isLogOutBtnVisible = false;
+});

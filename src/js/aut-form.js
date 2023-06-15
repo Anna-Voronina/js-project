@@ -44,6 +44,8 @@ const singInBtn = document.querySelector('#singIn');
 const burgerSignUpBtn = document.querySelector('.js-burger-sign-up-btn');
 const burgerSignUpBtnText = document.querySelector('.burger-sign-up-btn-text');
 const burgerLogOutBtn = document.querySelector('.burger-log-out-btn');
+const burgerArrowRightIcon = document.querySelector('.js-burger-arrow-right');
+const burgerUserIcon = document.querySelector('.burger-user-icon');
 
 // ф-я "реестрації"
 
@@ -99,8 +101,12 @@ function onSignUpBtnClick(event) {
       arrowDownIcon.classList.remove('is-hidden');
       arrowRightIcon.classList.add('is-hidden');
       burgerSignUpBtn.classList.add('is-hidden');
+      burgerSignUpBtn.style.border = 'none';
       burgerLogOutBtn.classList.remove('is-hidden');
       burgerSignUpBtn.style.backgroundColor = 'transparent';
+      burgerArrowRightIcon.classList.add('is-hidden');
+      burgerUserIcon.classList.remove('is-hidden');
+      burgerSignUpBtnText.classList.add('grow');
     })
     .catch(error => {
       Notify.failure(
@@ -162,7 +168,11 @@ signInBtnSubmit.addEventListener('click', event => {
       arrowDownIcon.classList.remove('is-hidden');
       arrowRightIcon.classList.add('is-hidden');
       burgerSignUpBtn.style.backgroundColor = 'transparent';
+      burgerSignUpBtn.style.border = 'none';
       burgerLogOutBtn.classList.remove('is-hidden');
+      burgerArrowRightIcon.classList.add('is-hidden');
+      burgerUserIcon.classList.remove('is-hidden');
+      burgerSignUpBtnText.classList.add('grow');
     })
     .catch(error => {
       Notify.failure(
@@ -195,6 +205,10 @@ const checkAuthState = () => {
       arrowRightIcon.classList.add('is-hidden');
       burgerSignUpBtn.style.backgroundColor = 'transparent';
       burgerLogOutBtn.classList.remove('is-hidden');
+      burgerArrowRightIcon.classList.add('is-hidden');
+      burgerUserIcon.classList.remove('is-hidden');
+      burgerSignUpBtn.style.border = 'none';
+      burgerSignUpBtnText.classList.add('grow');
     } else {
     }
   });
@@ -210,6 +224,13 @@ const userSignOut = async () => {
   userIcon.classList.add('is-hidden');
   burgerSignUpBtn.style.backgroundColor = '#4F2EE8';
   burgerSignUpBtnText.textContent = 'Sign up';
+  burgerLogOutBtn.classList.add('is-hidden');
+  arrowDownIcon.classList.add('is-hidden');
+  arrowRightIcon.classList.remove('is-hidden');
+  burgerArrowRightIcon.classList.remove('is-hidden');
+  burgerUserIcon.classList.add('is-hidden');
+  burgerSignUpBtn.style.border = '1.5px solid #111';
+  burgerSignUpBtnText.classList.remove('grow');
   storage.remove('userId');
   storage.remove('bookList');
   setTimeout(() => {
