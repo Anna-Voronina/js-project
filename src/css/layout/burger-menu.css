@@ -86,8 +86,9 @@
   font-weight: 500;
   margin-bottom: 126px;
   display: flex;
-  justify-content: space-between;
   padding: 14px;
+  align-items: center;
+  gap: 9px;
 }
 
 .mobile-menu-modal .header-nav-mobile {
@@ -117,15 +118,6 @@ body.modal-open {
   overflow: auto;
   padding: 20px;
   padding-bottom: 80px;
-}
-
-.shopping-list-header.current {
-  color: var(--light-black-color);
-  background-color: var(--yellow-color);
-  padding: 8px 16px;
-  border-radius: 36px;
-  font-weight: 700;
-  border: none;
 }
 
 .burger-log-out-btn {
