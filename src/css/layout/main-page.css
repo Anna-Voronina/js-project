@@ -180,7 +180,8 @@
   color: var(--text-color);
   transition: background-color var(--transition-duration) var(--timing-function),
     color var(--transition-duration) var(--timing-function),
-    border-color var(--transition-duration) var(--timing-function);
+    border-color var(--transition-duration) var(--timing-function),
+    transfrom var(--transition-duration) var(--timing-function);
 }
 
 .category-list-button:hover,
@@ -188,4 +189,15 @@
   background-color: var(--blue-color);
   color: var(--white-color);
   border-color: transparent;
+  transform: scale(1.03);
+}
+
+.book-thumb {
+  transition: transform 250ms var(--timing-function);
+}
+
+.book-thumb:hover {
+  transform: scale(1.05);
+  box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.6);
+  border-radius: 4px;
 }

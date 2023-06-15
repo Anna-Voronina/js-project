@@ -10,6 +10,15 @@
   height: 352px;
 }
 
+.sub-comp-ref {
+  transition: transform ease-in-out 150ms;
+}
+
+.sub-comp-ref:hover,
+.sub-comp-ref:focus {
+  transform: scale(1.05);
+}
+
 .sup-content-wrp {
   display: flex;
   flex-direction: column;
