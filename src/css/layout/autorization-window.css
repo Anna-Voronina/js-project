@@ -168,3 +168,11 @@
   color: var(--blue-color);
   text-decoration: underline;
 }
+
+.valid {
+  border-color: #008000;
+}
+
+.invalid {
+  border-color: #ff0000;
+}
