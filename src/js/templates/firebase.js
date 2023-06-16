@@ -4,18 +4,22 @@ import { database } from '../aut-form';
 
 export function updateDatabase() {
   const updatedStorage = Storage.load('bookList') || [];
-  const userId = Storage.load('userId');
-  update(ref(database, 'users/' + userId), {
+  const userData = Storage.load('userData');
+  update(ref(database, 'users/' + userData.userId), {
     shoppingList: JSON.stringify(updatedStorage),
   });
 }
 
 export function getUserDatabase(param) {
-  const userId = Storage.load('userId');
+  const userData = Storage.load('userData');
   const dbRef = ref(database);
-  const getData = get(child(dbRef, `users/${userId}/${param}`))
+  const getData = get(child(dbRef, `users/${userData.userId}/${param}`))
     .then(snap => {
-      return snap._node.value_;
+      if (snap._node.value_) {
+        return snap._node.value_;
+      } else {
+        return [];
+      }
     })
     .catch(error => {
       console.log(error);
@@ -23,15 +27,3 @@ export function getUserDatabase(param) {
 
   return getData;
 }
-
-// get(child(dbRef, `users/${userId}`))
-//   .then(snapshot => {
-//     if (snapshot.exists()) {
-//       console.log(snapshot.val());
-//     } else {
-//       console.log('No data available');
-//     }
-//   })
-//   .catch(error => {
-//     console.error(error);
-//   });

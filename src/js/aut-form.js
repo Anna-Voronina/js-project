@@ -12,6 +12,10 @@ import storage from './local-storage';
 import { getUserDatabase } from './templates/firebase';
 import { countBook } from './templates/shoppingListCounter';
 import { Notify } from 'notiflix';
+import { onAuthFormValidation } from './auth-form-validation';
+import { onHeaderAuthBtnChange } from './headerAuthBtn';
+import { onBurgerAuthBtnChange } from './burgerAuthBtn';
+import refs from './components/refs';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyA-c5ktNEt2bpwdrjlWbguPygCPHCJWGLM',
@@ -27,108 +31,89 @@ export const app = initializeApp(firebaseConfig);
 export const database = getDatabase(app);
 const auth = getAuth(app);
 
-const userName = document.querySelector('#userName');
-const userEmail = document.querySelector('#userEmail');
-const userPassword = document.querySelector('#userPassword');
-const authForm = document.querySelector('.authorization-form');
-const userIcon = document.querySelector('.user-icon');
-const signUpBtnText = document.querySelector('.sign-up-btn-text');
-const arrowDownIcon = document.querySelector('.header-arrow-down');
-const arrowRightIcon = document.querySelector('.arrow-right');
-const logOutBtn = document.querySelector('.log-out-btn');
-const autBackdrop = document.querySelector('.authorization-backdrop');
-const singUpBtn = document.querySelector('.authorization-form-submit');
-const signInBtnSubmit = document.querySelector('.authorization-sign-in-btn');
-const signUpBtnChange = document.querySelector('#singUp');
-const singInBtn = document.querySelector('#singIn');
-const burgerSignUpBtn = document.querySelector('.js-burger-sign-up-btn');
-const burgerSignUpBtnText = document.querySelector('.burger-sign-up-btn-text');
-const burgerLogOutBtn = document.querySelector('.burger-log-out-btn');
-const burgerArrowRightIcon = document.querySelector('.js-burger-arrow-right');
-const burgerUserIcon = document.querySelector('.burger-user-icon');
+const {
+  authForm,
+  userNameInput,
+  userEmailInput,
+  userPasswordInput,
+  authSignUpBtnSubmit,
+  authSignInBtnSubmit,
+  authSignUpBtnChange,
+  authSignInBtnChange,
+  headerSignUpBtnText,
+  headerLogOutBtn,
+  burgerSignUpBtnText,
+  burgerLogOutBtn,
+} = refs;
+
+authForm.addEventListener('submit', onAuthFormSignUpSubmit);
+authSignInBtnSubmit.addEventListener('click', onAuthFormSignInSubmit);
 
 // ф-я "реестрації"
 
-singUpBtn.addEventListener('click', onSignUpBtnClick);
-
-function onSignUpBtnClick(event) {
+function onAuthFormSignUpSubmit(event) {
   event.preventDefault();
+
+  if (!onAuthFormValidation('signedUp')) {
+    return;
+  }
+
   const storageData = storage.load('bookList') || [];
 
-  const saveName = userName.value;
-  console.log(saveName);
-  const saveEmail = userEmail.value;
-  const savePassword = userPassword.value;
-  authForm.reset();
+  const userName = userNameInput.value.trim();
+  const userEmail = userEmailInput.value.trim();
+  const userPassword = userPasswordInput.value.trim();
 
-  createUserWithEmailAndPassword(auth, saveEmail, savePassword)
+  createUserWithEmailAndPassword(auth, userEmail, userPassword)
     .then(userCredential => {
+      authForm.reset();
+
       const user = userCredential.user;
 
       set(ref(database, 'users/' + user.uid), {
-        name: saveName,
-        email: saveEmail,
-        password: savePassword,
+        name: userName,
+        email: userEmail,
+        password: userPassword,
         shoppingList: JSON.stringify(storageData),
       });
 
-      updateProfile(auth.currentUser, {
-        displayName: saveName,
-      })
-        .then(() => {
-          signUpBtnText.classList.add('grow');
-          signUpBtnText.textContent = user.displayName;
-          storage.save('userId', user.uid);
-        })
-        .catch(error => {
-          Notify.failure(
-            'Oops! Something went wrong. We are sorry for the inconvenience. Please try again later.'
-          );
-        });
+      storage.save('userData', { userId: user.uid, userName });
 
-      getUserDatabase('name').then(data => {
-        burgerSignUpBtnText.textContent = data;
-        setTimeout(() => {
-          Notify.success(
-            'Thanks for signing up. Welcome to Bookshelf! We are happy to have you on board.'
-          );
-          countBook();
-        }, 500);
-      });
+      onHeaderAuthBtnChange('signedUp');
+      onBurgerAuthBtnChange('signedUp');
 
-      userIcon.classList.remove('is-hidden');
-      autBackdrop.classList.add('is-hidden');
-      arrowDownIcon.classList.remove('is-hidden');
-      arrowRightIcon.classList.add('is-hidden');
-      burgerSignUpBtn.classList.add('is-hidden');
-      burgerSignUpBtn.style.border = 'none';
-      burgerLogOutBtn.classList.remove('is-hidden');
-      burgerSignUpBtn.style.backgroundColor = 'transparent';
-      burgerArrowRightIcon.classList.add('is-hidden');
-      burgerUserIcon.classList.remove('is-hidden');
-      burgerSignUpBtnText.classList.add('grow');
+      setTimeout(() => {
+        Notify.success(
+          'Thanks for signing up. Welcome to Bookshelf! We are happy to have you on board.'
+        );
+        countBook();
+      }, 500);
     })
     .catch(error => {
-      Notify.failure(
-        'Oops! Something went wrong. We are sorry for the inconvenience. Please try again later.'
-      );
+      console.log(error);
     });
 }
 
 //ф-я "увійти у систему"
-signInBtnSubmit.addEventListener('click', event => {
+
+function onAuthFormSignInSubmit(event) {
   event.preventDefault();
-  const saveName = userName.value;
-  const saveEmail = userEmail.value;
-  const savePassword = userPassword.value;
+
+  if (!onAuthFormValidation('signedIn')) {
+    return;
+  }
+
+  const userEmail = userEmailInput.value.trim();
+  const userPassword = userPasswordInput.value.trim();
+
   authForm.reset();
 
-  signInWithEmailAndPassword(auth, saveEmail, savePassword)
+  signInWithEmailAndPassword(auth, userEmail, userPassword)
     .then(userCredential => {
       const user = userCredential.user;
-      user.displayName = saveName;
+
       const dt = new Date();
-      storage.save('userId', user.uid);
+      storage.save('userData', { userId: user.uid });
 
       update(ref(database, 'user/' + user.uid), {
         last_login: dt,
@@ -139,16 +124,14 @@ signInBtnSubmit.addEventListener('click', event => {
           storage.save('bookList', JSON.parse(data));
         })
         .catch(error => {
-          Notify.failure(
-            'Oops! Something went wrong. We are sorry for the inconvenience. Please try again later.'
-          );
+          console.log(error);
         });
 
       getUserDatabase('name')
         .then(data => {
-          signUpBtnText.textContent = data;
-          burgerSignUpBtnText.textContent = data;
           setTimeout(() => {
+            onHeaderAuthBtnChange('signedIn');
+            onBurgerAuthBtnChange('signedIn');
             Notify.success(
               `Hello ${
                 data.charAt(0).toUpperCase() + data.slice(1)
@@ -158,58 +141,19 @@ signInBtnSubmit.addEventListener('click', event => {
           }, 500);
         })
         .catch(error => {
-          Notify.failure(
-            'Oops! Something went wrong. We are sorry for the inconvenience. Please try again later.'
-          );
+          console.log(error);
         });
-
-      userIcon.classList.remove('is-hidden');
-      autBackdrop.classList.add('is-hidden');
-      arrowDownIcon.classList.remove('is-hidden');
-      arrowRightIcon.classList.add('is-hidden');
-      burgerSignUpBtn.style.backgroundColor = 'transparent';
-      burgerSignUpBtn.style.border = 'none';
-      burgerLogOutBtn.classList.remove('is-hidden');
-      burgerArrowRightIcon.classList.add('is-hidden');
-      burgerUserIcon.classList.remove('is-hidden');
-      burgerSignUpBtnText.classList.add('grow');
     })
     .catch(error => {
-      Notify.failure(
-        'Oops! Something went wrong. We are sorry for the inconvenience. Please try again later.'
-      );
-    })
-    .finally(() => {
-      countBook();
+      console.log(error);
     });
-});
+}
 
 const checkAuthState = () => {
   onAuthStateChanged(auth, user => {
     if (user) {
-      getUserDatabase('name')
-        .then(data => {
-          signUpBtnText.textContent = data;
-          burgerSignUpBtnText.textContent = data;
-        })
-        .catch(error => {
-          Notify.failure(
-            'Oops! Something went wrong. We are sorry for the inconvenience. Please try again later.'
-          );
-        });
-
-      signUpBtnText.classList.add('grow');
-      userIcon.classList.remove('is-hidden');
-      autBackdrop.classList.add('is-hidden');
-      arrowDownIcon.classList.remove('is-hidden');
-      arrowRightIcon.classList.add('is-hidden');
-      burgerSignUpBtn.style.backgroundColor = 'transparent';
-      burgerLogOutBtn.classList.remove('is-hidden');
-      burgerArrowRightIcon.classList.add('is-hidden');
-      burgerUserIcon.classList.remove('is-hidden');
-      burgerSignUpBtn.style.border = 'none';
-      burgerSignUpBtnText.classList.add('grow');
-    } else {
+      onHeaderAuthBtnChange('signedIn');
+      onBurgerAuthBtnChange('signedIn');
     }
   });
 };
@@ -218,21 +162,12 @@ checkAuthState();
 
 const userSignOut = async () => {
   await signOut(auth);
-  logOutBtn.classList.add('is-hidden');
-  signUpBtnText.textContent = 'Sign up';
-  signUpBtnText.classList.remove('grow');
-  userIcon.classList.add('is-hidden');
-  burgerSignUpBtn.style.backgroundColor = '#4F2EE8';
-  burgerSignUpBtnText.textContent = 'Sign up';
-  burgerLogOutBtn.classList.add('is-hidden');
-  arrowDownIcon.classList.add('is-hidden');
-  arrowRightIcon.classList.remove('is-hidden');
-  burgerArrowRightIcon.classList.remove('is-hidden');
-  burgerUserIcon.classList.add('is-hidden');
-  burgerSignUpBtn.style.border = '1.5px solid #111';
-  burgerSignUpBtnText.classList.remove('grow');
-  storage.remove('userId');
+  onHeaderAuthBtnChange('signedOut');
+  onBurgerAuthBtnChange('signedOut');
+
+  storage.remove('userData');
   storage.remove('bookList');
+
   setTimeout(() => {
     countBook();
     Notify.info(
@@ -241,24 +176,24 @@ const userSignOut = async () => {
   }, 250);
 };
 
-logOutBtn.addEventListener('click', userSignOut);
+headerLogOutBtn.addEventListener('click', userSignOut);
 burgerLogOutBtn.addEventListener('click', userSignOut);
 
 const onOptionSignInBtnClick = function (event) {
-  userName.classList.add('is-hidden');
-  singUpBtn.classList.add('is-hidden');
-  signInBtnSubmit.classList.remove('is-hidden');
-  signUpBtnChange.classList.remove('authorization-btn-active');
-  singInBtn.classList.add('authorization-btn-active');
+  userNameInput.classList.add('is-hidden');
+  authSignUpBtnSubmit.classList.add('is-hidden');
+  authSignInBtnSubmit.classList.remove('is-hidden');
+  authSignUpBtnChange.classList.remove('authorization-btn-active');
+  authSignInBtnChange.classList.add('authorization-btn-active');
 };
 
 const onOptionSignUpBtnClick = function (event) {
-  userName.classList.remove('is-hidden');
-  singUpBtn.classList.remove('is-hidden');
-  signInBtnSubmit.classList.add('is-hidden');
-  signUpBtnChange.classList.add('authorization-btn-active');
-  singInBtn.classList.remove('authorization-btn-active');
+  userNameInput.classList.remove('is-hidden');
+  authSignUpBtnSubmit.classList.remove('is-hidden');
+  authSignInBtnSubmit.classList.add('is-hidden');
+  authSignUpBtnChange.classList.add('authorization-btn-active');
+  authSignInBtnChange.classList.remove('authorization-btn-active');
 };
 
-singInBtn.addEventListener('click', onOptionSignInBtnClick);
-signUpBtnChange.addEventListener('click', onOptionSignUpBtnClick);
+authSignInBtnChange.addEventListener('click', onOptionSignInBtnClick);
+authSignUpBtnChange.addEventListener('click', onOptionSignUpBtnClick);

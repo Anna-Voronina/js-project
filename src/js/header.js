@@ -24,15 +24,9 @@ if (currentPath === 'shopping-list.html') {
   ref.burgerHomeBtnEl.classList.toggle('current');
   ref.burgerShopBtnEl.classList.toggle('current');
 }
-//end of
-
-// const storageBook = Storage.load('bookList');
-// if (storageBook) {
-//   countBook();
-// }
 
 function onSignUpBtnClick() {
-  const hasUserId = Storage.load('userId');
+  const hasUserId = Storage.load('userData');
   if (!hasUserId) {
     ref.authModal.classList.remove('is-hidden');
     document.body.style.overflow = 'hidden';

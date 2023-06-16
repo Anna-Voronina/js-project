@@ -11,20 +11,22 @@
     </button>
     <form class="authorization-form" autocomplete="on">
       <input
-        class="authorization-input"
+        class="authorization-input js-auth-form-name-input"
         type="name"
         name="name"
         placeholder="Name"
         autofocus
         id="userName"
+        required
       />
       <div class="user-email-wrapper">
         <input
-          class="authorization-input"
+          class="authorization-input js-auth-form-email-input"
           type="email"
           name="email"
           placeholder="Email"
           id="userEmail"
+          required
         />
         <svg class="input-img-mail" width="28" height="28">
           <use href="./images/sprite.svg#mail"></use>
@@ -32,11 +34,12 @@
       </div>
       <div class="user-password-wrapper">
         <input
-          class="authorization-input"
+          class="authorization-input js-auth-form-password-input"
           type="password"
           name="password"
           placeholder="Password"
           id="userPassword"
+          required
         />
         <svg class="input-img-pass" width="28" height="28">
           <use href="./images/sprite.svg#lock"></use>
