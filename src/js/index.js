@@ -1,5 +1,5 @@
 import { Notify } from 'notiflix';
-Notify.init({ timeout: 1000 });
+Notify.init({ timeout: 2000 });
 
 import './aside-categories.js';
 import './aside-support-ukraine.js';
