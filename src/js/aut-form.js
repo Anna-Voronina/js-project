@@ -1,7 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import {
   getAuth,
-  updateProfile,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   onAuthStateChanged,
@@ -40,9 +39,7 @@ const {
   authSignInBtnSubmit,
   authSignUpBtnChange,
   authSignInBtnChange,
-  headerSignUpBtnText,
   headerLogOutBtn,
-  burgerSignUpBtnText,
   burgerLogOutBtn,
 } = refs;
 
@@ -90,7 +87,7 @@ function onAuthFormSignUpSubmit(event) {
       }, 500);
     })
     .catch(error => {
-      console.log(error);
+      Notify.failure();
     });
 }
 
@@ -125,7 +122,7 @@ function onAuthFormSignInSubmit(event) {
           storage.save('bookList', JSON.parse(data));
         })
         .catch(error => {
-          console.log(error);
+          Notify.failure('Cannot find user database data (user shopping list)');
         });
 
       getUserDatabase('name')
@@ -146,11 +143,17 @@ function onAuthFormSignInSubmit(event) {
           }, 500);
         })
         .catch(error => {
-          console.log(error);
+          Notify.failure('Cannot find user database data (user name)');
         });
     })
     .catch(error => {
-      console.log(error);
+      if (error.code === 'auth/wrong-password') {
+        Notify.failure('You have entered a wrong password.');
+      }
+
+      if (error.code === 'auth/user-not-found') {
+        Notify.failure('This user is not found.');
+      }
     });
 }
 
