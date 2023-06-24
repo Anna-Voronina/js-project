@@ -1,3 +1,6 @@
+import { Notify } from 'notiflix';
+Notify.init({ timeout: 1000 });
+
 import './aside-categories.js';
 import './aside-support-ukraine.js';
 import './burger-menu.js';
