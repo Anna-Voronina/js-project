@@ -87,7 +87,7 @@ function onAuthFormSignUpSubmit(event) {
       }, 500);
     })
     .catch(error => {
-      Notify.failure();
+      Notify.failure('This email is already in use.');
     });
 }
 
