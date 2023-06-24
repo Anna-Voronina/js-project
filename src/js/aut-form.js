@@ -113,7 +113,8 @@ function onAuthFormSignInSubmit(event) {
       const user = userCredential.user;
 
       const dt = new Date();
-      storage.save('userData', { userId: user.uid });
+
+      storage.save('userData', { userId: user.uid, userName: '' });
 
       update(ref(database, 'user/' + user.uid), {
         last_login: dt,
@@ -130,8 +131,12 @@ function onAuthFormSignInSubmit(event) {
       getUserDatabase('name')
         .then(data => {
           setTimeout(() => {
+            const userData = storage.load('userData');
+            storage.save('userData', { ...userData, userName: data });
+
             onHeaderAuthBtnChange('signedIn');
             onBurgerAuthBtnChange('signedIn');
+
             Notify.success(
               `Hello ${
                 data.charAt(0).toUpperCase() + data.slice(1)
