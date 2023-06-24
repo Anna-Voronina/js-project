@@ -103,10 +103,9 @@ function onAuthFormSignInSubmit(event) {
   const userEmail = userEmailInput.value.trim();
   const userPassword = userPasswordInput.value.trim();
 
-  authForm.reset();
-
   signInWithEmailAndPassword(auth, userEmail, userPassword)
     .then(userCredential => {
+      authForm.reset();
       const user = userCredential.user;
 
       const dt = new Date();
